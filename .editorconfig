@@ -1,16 +1,21 @@
+# Editor configuration, see http://editorconfig.org
 root = true
 
 [*]
-indent_style = space
-indent_size = 4
-end_of_line = lf
 charset = utf-8
-trim_trailing_whitespace = true
-insert_final_newline = true
-
-[{package.json,*.xml}]
 indent_style = space
 indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{yml,yaml,toml,sh,tf,tfvars,json,hcl,js}]
+charset = utf-8
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = true
 
 [*.md]
+indent_style = space
+indent_size = 2
+max_line_length = 100
 trim_trailing_whitespace = false

@@ -1,0 +1,1 @@
+{"version":3,"file":"AccessControlError.js","sourceRoot":"","sources":["../../../src/core/AccessControlError.ts"],"names":[],"mappings":";;AAOA,MAAM,kBAAmB,SAAQ,KAAK;IAEpC,YAAmB,UAAkB,EAAE;QAErC,KAAK,CAAC,OAAO,CAAC,CAA2B;QAFxB,YAAO,GAAP,OAAO,CAAa;QADhC,SAAI,GAAW,oBAAoB,CAAC;QAOzC,MAAM,CAAC,cAAc,CAAC,IAAI,EAAE,kBAAkB,CAAC,SAAS,CAAC,CAAC;IAC5D,CAAC;CACF;AAEQ,gDAAkB"}

@@ -2,7 +2,7 @@
 /node_modules/
 npm-debug.log
 tmp
-TODO.md
+
 /files/
 /docs/errors.md
 /test/.coverage/

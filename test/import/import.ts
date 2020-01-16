@@ -1,4 +1,4 @@
-import { AccessControl } from '../../';
+import { AccessControl } from '../../src';
 
 console.log(AccessControl);
 const ac = new AccessControl();
