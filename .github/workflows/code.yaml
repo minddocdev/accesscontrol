@@ -1,0 +1,39 @@
+name: "code"
+
+on:
+  push:
+    branches:
+      - "master"
+    paths:
+      - ".github/workflows/code.yaml"
+      - "package.json"
+      - "lib/**"
+      - "src/**"
+      - "test/*"
+      - "tsconfig.json"
+      - "tslint.json"
+  pull_request:
+    paths:
+      - ".github/workflows/code.yaml"
+      - "package.json"
+      - "lib/**"
+      - "src/**"
+      - "test/*"
+      - "tsconfig.json"
+      - "tslint.json"
+
+jobs:
+  test:
+    name: lint, test and build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout git repository
+        uses: actions/checkout@v1.2.0
+      - name: Install yarn dependencies
+        run: yarn install --frozen-lockfile
+      - name: Lint code
+        run: yarn lint
+      - name: Test code
+        run: yarn test
+      - name: Build code
+        run: yarn build

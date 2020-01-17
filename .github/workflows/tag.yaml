@@ -1,0 +1,15 @@
+name: "tag"
+on:
+  push:
+    branches:
+      - master
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Bump version and push tag
+        uses: minddocdev/github-tag-action@master
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          WITH_V: true
