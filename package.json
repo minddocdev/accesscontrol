@@ -1,38 +1,53 @@
 {
   "name": "accesscontrol",
-  "version": "1.0.0",
-  "description": "Role and Attribute based Access Control for Node.js",
-  "main": "./index.js",
+  "version": "0.0.1",
+  "description": "Role and Attribute based Access Control",
+  "author": "MindDoc Health GmbH",
+  "license": "MIT",
+  "main": "lib/src/index.js",
   "directories": {
-    "lib": "./lib",
-    "test": "./test"
+    "lib": "lib",
+    "test": "test"
   },
   "files": [
-    "index.js",
+    "lib/src/index.js",
     "lib"
   ],
-  "types": "./lib/index.d.ts",
+  "types": "lib/src/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minddocdev/accesscontrol.git"
+  },
+  "keywords": [
+    "accesscontrol",
+    "node",
+    "rbac",
+    "abac"
+  ],
   "scripts": {
-    "clean": "rm -rf ./lib",
-    "build": "yarn clean && tsc -b -v",
-    "test": "yarn build && jest --verbose --no-cache",
-    "test!": "jest --verbose --no-cache",
-    "cover": "yarn && jest --coverage --verbose --no-cache",
-    "cover!": "jest --coverage --verbose --no-cache",
+    "build": "tsc -b -v",
+    "test": "yarn build && jest --coverage --verbose --no-cache",
+    "lint": "tslint --project .",
     "ncu:u": "ncu -u"
   },
   "devDependencies": {
     "@types/jest": "^24.9.0",
     "@types/node": "^13.1.7",
-    "jest": "~24.9.0",
-    "npm-check-updates": "~4.0.1",
-    "prettier": "~1.19.1",
+    "husky": "^4.0.3",
+    "jest": "^24.9.0",
+    "npm-check-updates": "^4.0.1",
+    "prettier": "^1.19.1",
     "ts-jest": "^24.3.0",
-    "tslint": "~5.20.1",
-    "tslint-config-airbnb": "~5.11.2",
+    "tslint": "^5.20.1",
+    "tslint-config-airbnb": "^5.11.2",
     "typescript": "^3.7.5"
   },
   "dependencies": {
     "notation": "^1.3.6"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn build"
+    }
   }
 }
