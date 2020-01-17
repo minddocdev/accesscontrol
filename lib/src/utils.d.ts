@@ -30,5 +30,3 @@ export declare function hasValidNames(list: any, throwOnInvalid?: boolean): bool
 export declare function getInspectedGrants(grantsObject: any): any;
 export declare function commitToGrants(grants: any, access: IAccessInfo, normalizeAll?: boolean): void;
 export declare function getUnionAttrsOfRoles(grants: any, query: IQueryInfo): string[];
-export declare function filter(object: any, attributes: string[]): any;
-export declare function filterAll(arrOrObj: any, attributes: string[]): any;

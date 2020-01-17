@@ -1,5 +1,3 @@
-import * as Notation from 'notation';
-
 import { AccessControlError, IAccessInfo, IQueryInfo } from './core';
 import { actions, Possession, possessions } from './enums';
 
@@ -714,7 +712,6 @@ export function getUnionAttrsOfRoles(grants: any, query: IQueryInfo): string[] {
   roles.forEach((roleName: string, _: number) => {
     role = grants[roleName];
     // no need to check role existence #getFlatRoles() does that.
-
     resource = role[normalizedQuery.resource! as any];
     if (resource) {
       // e.g. resource['create:own']
@@ -727,60 +724,23 @@ export function getUnionAttrsOfRoles(grants: any, query: IQueryInfo): string[] {
           ([] as any)
         ).concat(),
       );
-      // console.log(resource, 'for:', action + '.' + possession);
     }
   });
 
-  // union all arrays of (permitted resource) attributes (for each role)
-  // into a single array.
-  let attrs: any = [];
-  const len: number = attrsList.length;
-  if (len > 0) {
-    attrs = attrsList[0];
-    let i = 1;
-    while (i < len) {
-      attrs = Notation.Glob.union(attrs, attrsList[i]);
-      i += 1;
+  let jointArray: string[] = [];
+  attrsList.forEach((array: string) => {
+    jointArray = [...jointArray, ...array];
+  });
+  const union = Array.from(new Set([...jointArray]));
+  const hasWildcard = union.includes('*');
+  for (let i = 0; i < union.length; i++) {
+    if (
+      (hasWildcard || union[i].includes('!')) &&
+      !union[i].includes('!') &&
+      !union[i].includes('*')
+    ) {
+      union.splice(i, 1);
     }
   }
-  return attrs;
-}
-
-/**
- *  Deep clones the source object while filtering its properties by the
- *  given attributes (glob notations). Includes all matched properties and
- *  removes the rest.
- *
- *  @param {Object} object - Object to be filtered.
- *  @param {string[]} attributes - Array of glob notations.
- *
- *  @returns {Object} - Filtered object.
- */
-export function filter(object: any, attributes: string[]): any {
-  if (!Array.isArray(attributes) || attributes.length === 0) {
-    return {};
-  }
-  const notation = new Notation(object);
-  return notation.filter(attributes).value;
-}
-
-/**
- *  Deep clones the source array of objects or a single object while
- *  filtering their properties by the given attributes (glob notations).
- *  Includes all matched properties and removes the rest of each object in
- *  the array.
- *
- *  @param {Array|Object} arrOrObj - Array of objects or single object to be
- *  filtered.
- *  @param {string[]} attributes - Array of glob notations.
- *
- *  @returns {Array|Object}
- */
-export function filterAll(arrOrObj: any, attributes: string[]): any {
-  if (!Array.isArray(arrOrObj)) {
-    return filter(arrOrObj, attributes);
-  }
-  return arrOrObj.map((o: any) => {
-    return filter(o, attributes);
-  });
+  return union.includes('*') ? ['*'] : union.sort().reverse();
 }

@@ -1,5 +1,5 @@
 import { IQueryInfo } from '../core';
-import { filterAll, getUnionAttrsOfRoles } from '../utils';
+import { getUnionAttrsOfRoles } from '../utils';
 
 /**
  *  Represents the inner `Permission` class that defines the granted or denied
@@ -35,7 +35,6 @@ import { filterAll, getUnionAttrsOfRoles } from '../utils';
  *  @memberof AccessControl
  */
 class Permission {
-
   /**
    *  @private
    */
@@ -116,22 +115,6 @@ class Permission {
       return attr.trim().slice(0, 1) !== '!';
     });
   }
-
-  /**
-   *  Filters the given data object (or array of objects) by the permission
-   *  attributes and returns this data with allowed attributes.
-   *
-   *  @param {Object|Array} data
-   *         Data object to be filtered. Either a single object or array
-   *         of objects.
-   *
-   *  @returns {Object|Array}
-   *           The filtered data object.
-   */
-  filter(data: any): any {
-    return filterAll(data, this.attributes);
-  }
-
 }
 
 export { Permission };

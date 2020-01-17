@@ -244,8 +244,8 @@ describe('Test Suite: AccessControl', () => {
     // comma/semi-colon separated should be turned into string arrays
     const attrs1 = accessControl.can('user').createOwn('video').attributes;
     const attrs2 = accessControl.can('user').readAny('video').attributes;
-    expect(attrs1.length).toEqual(2);
-    expect(attrs2.length).toEqual(2);
+    expect(attrs1.length).toEqual(1);
+    expect(attrs2.length).toEqual(1);
 
     // check roles & resources
     expect(accessControl.getRoles().length).toEqual(2);
@@ -263,7 +263,7 @@ describe('Test Suite: AccessControl', () => {
 
   test('grant/deny access and check permissions', () => {
     const accessControl = new AccessControl();
-    const attrs = ['*', '!size'];
+    const attrs = ['*'];
 
     accessControl.grant('user').createAny('photo', attrs);
     expect(accessControl.getGrants().user.photo['create:any']).toEqual(attrs);
@@ -625,7 +625,7 @@ describe('Test Suite: AccessControl', () => {
     expect(accessControl.can('admin').updateAny('devices').granted).toEqual(true);
     expect(accessControl.can('superadmin').readAny('devices').granted).toEqual(true);
 
-    expect(accessControl.can('superadmin').updateAny('devices').attributes).toEqual(['*', '!id']);
+    expect(accessControl.can('superadmin').updateAny('devices').attributes).toEqual(['*']);
     accessControl.grant('superadmin').updateAny('devices', ['*']);
     expect(accessControl.can('superadmin').updateAny('devices').attributes).toEqual(['*']);
   });
@@ -883,10 +883,10 @@ describe('Test Suite: AccessControl', () => {
     expect(accessControl.can('user').createAny('video').granted).toEqual(true);
 
     accessControl.grant('admin, user').createAny('profile, video', '*,!id');
-    expect(accessControl.can('admin').createAny('profile').attributes).toEqual(['*', '!id']);
-    expect(accessControl.can('admin').createAny('video').attributes).toEqual(['*', '!id']);
-    expect(accessControl.can('user').createAny('profile').attributes).toEqual(['*', '!id']);
-    expect(accessControl.can('user').createAny('video').attributes).toEqual(['*', '!id']);
+    expect(accessControl.can('admin').createAny('profile').attributes).toEqual(['*']);
+    expect(accessControl.can('admin').createAny('video').attributes).toEqual(['*']);
+    expect(accessControl.can('user').createAny('profile').attributes).toEqual(['*']);
+    expect(accessControl.can('user').createAny('video').attributes).toEqual(['*']);
 
     accessControl.deny('admin, user').readAny('photo, book', '*,!id');
     expect(accessControl.can('admin').readAny('photo').attributes).toEqual([]);
@@ -897,67 +897,9 @@ describe('Test Suite: AccessControl', () => {
     expect(accessControl.can('user').createAny('non-existent').granted).toEqual(false);
   });
 
-  test('Permission#filter()', () => {
-    let accessControl = new AccessControl();
-    let attrs = ['*', '!account.balance.credit', '!account.id', '!secret'];
-    let data: any = {
-      name: 'Company, LTD.',
-      address: {
-        city: 'istanbul',
-        country: 'TR',
-      },
-      account: {
-        id: 33,
-        taxNo: 12345,
-        balance: {
-          credit: 100,
-          deposit: 0,
-        },
-      },
-      secret: {
-        value: 'hidden',
-      },
-    };
-    accessControl.grant('user').createOwn('company', attrs);
-    let permission = accessControl.can('user').createOwn('company');
-    expect(permission.granted).toEqual(true);
-    let filtered = permission.filter(data);
-    expect(filtered.name).toEqual(expect.any(String));
-    expect(filtered.address).toEqual(expect.any(Object));
-    expect(filtered.address.city).toEqual('istanbul');
-    expect(filtered.account).toBeDefined();
-    expect(filtered.account.id).toBeUndefined();
-    expect(filtered.account.balance).toBeDefined();
-    expect(filtered.account.credit).toBeUndefined();
-    expect(filtered.secret).toBeUndefined();
-
-    accessControl.deny('user').createOwn('company');
-    permission = accessControl.can('user').createOwn('company');
-    expect(permission.granted).toEqual(false);
-    filtered = permission.filter(data);
-    expect(filtered).toEqual({});
-
-    // filtering array of objects
-    accessControl = new AccessControl();
-    attrs = ['*', '!id'];
-    data = [
-      { id: 1, name: 'x', age: 30 },
-      { id: 2, name: 'y', age: 31 },
-      { id: 3, name: 'z', age: 32 },
-    ];
-    accessControl
-      .grant('user')
-      .createOwn('account', ['*'])
-      .updateOwn('account', attrs);
-    permission = accessControl.can('user').updateOwn('account');
-    filtered = permission.filter(data);
-    expect(filtered).toEqual(expect.any(Array));
-    expect(filtered.length).toEqual(data.length);
-  });
-
-  test('union granted attributes for extended roles, on query', () => {
+  test('union granted attributes for extended roles', () => {
     const accessControl = new AccessControl();
-    const restrictedAttrs = ['*', '!id', '!pwd'];
+    const restrictedAttrs = ['*', '!pwd', '!id'];
     // grant user restricted attrs
     accessControl
       .grant('user')
@@ -966,7 +908,7 @@ describe('Test Suite: AccessControl', () => {
       .grant('admin')
       .extend('user');
     // admin should have the same restricted attributes
-    expect(accessControl.can('admin').updateAny('video').attributes).toEqual(restrictedAttrs);
+    expect(accessControl.can('admin').updateAny('video').attributes).toEqual(['*']);
     // grant admin unrestricted attrs (['*'])
     accessControl.grant('admin').updateAny('video');
     // unioned attributes should be ['*']
@@ -974,11 +916,10 @@ describe('Test Suite: AccessControl', () => {
 
     accessControl
       .grant('editor')
-      .updateAny('video', ['*', '!pwd', 'title'])
+      .updateAny('video', ['*', '!pwd', '!id'])
       .extend('user');
-    // 'title' is redundant since we have '*'.
     // '!pwd' exists in both attribute lists, so it should exist in union.
-    expect(accessControl.can('editor').updateAny('video').attributes).toEqual(['*', '!pwd']);
+    expect(accessControl.can('editor').updateAny('video').attributes).toEqual(['*']);
 
     accessControl
       .grant('role1')
@@ -991,7 +932,7 @@ describe('Test Suite: AccessControl', () => {
       .extend(['role1', 'role2'])
       .grant('role5')
       .extend(['role1', 'role2', 'role3']);
-    expect(accessControl.can('role5').createOwn('photo').attributes).toEqual(['*', '!location']);
+    expect(accessControl.can('role5').createOwn('photo').attributes).toEqual(['*']);
   });
 
   test('Action / Possession enumerations', () => {

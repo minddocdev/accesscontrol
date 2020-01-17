@@ -6,6 +6,5 @@ declare class Permission {
     get resource(): string;
     get attributes(): string[];
     get granted(): boolean;
-    filter(data: any): any;
 }
 export { Permission };
