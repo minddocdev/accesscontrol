@@ -1,6 +1,5 @@
-// own modules
 import { IQueryInfo } from '../core';
-import { utils } from '../utils';
+import { filterAll, getUnionAttrsOfRoles } from '../utils';
 
 /**
  *  Represents the inner `Permission` class that defines the granted or denied
@@ -51,7 +50,7 @@ class Permission {
    */
   constructor(grants: any, query: IQueryInfo) {
     // set attributes first. this also validates the `query` object.
-    this._.attributes = utils.getUnionAttrsOfRoles(grants, query);
+    this._.attributes = getUnionAttrsOfRoles(grants, query);
     this._.role = query.role;
     this._.resource = query.resource;
   }
@@ -130,7 +129,7 @@ class Permission {
    *           The filtered data object.
    */
   filter(data: any): any {
-    return utils.filterAll(data, this.attributes);
+    return filterAll(data, this.attributes);
   }
 
 }

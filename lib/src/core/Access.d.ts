@@ -10,10 +10,8 @@ declare class Access {
     resource(value: string | string[]): Access;
     attributes(value: string | string[]): Access;
     extend(roles: string | string[]): Access;
-    inherit(roles: string | string[]): Access;
     grant(roleOrInfo?: string | string[] | IAccessInfo): Access;
     deny(roleOrInfo?: string | string[] | IAccessInfo): Access;
-    lock(): Access;
     createOwn(resource?: string | string[], attributes?: string | string[]): Access;
     createAny(resource?: string | string[], attributes?: string | string[]): Access;
     create(resource?: string | string[], attributes?: string | string[]): Access;

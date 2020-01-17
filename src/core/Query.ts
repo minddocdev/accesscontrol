@@ -1,6 +1,6 @@
 import { AccessControlError, IQueryInfo, Permission } from '../core';
 import { Action, Possession } from '../enums';
-import { utils } from '../utils';
+import { type } from '../utils';
 
 // tslint:disable function-name variable-name
 
@@ -47,7 +47,7 @@ class Query {
       // if this is just role(s); a string or array; we start building
       // the grant object for this.
       this.role(roleOrInfo);
-    } else if (utils.type(roleOrInfo) === 'object') {
+    } else if (type(roleOrInfo) === 'object') {
       // if this is a (permission) object, we directly build attributes
       // from grants.
       if (Object.keys(roleOrInfo!).length === 0) {

@@ -1,7 +1,16 @@
 import { AccessControl } from '../';
 import { AccessControlError, IAccessInfo } from '../core';
 import { Action, Possession } from '../enums';
-import { utils } from '../utils';
+import {
+  commitToGrants,
+  extendRole,
+  hasValidNames,
+  isInfoFulfilled,
+  preCreateRoles,
+  resetAttributes,
+  toStringArray,
+  type,
+} from '../utils';
 
 // tslint:disable no-parameter-reassignment variable-name function-name
 /**
@@ -9,12 +18,8 @@ import { utils } from '../utils';
  *  to be granted or denied; and finally commits it to the underlying grants
  *  model. You can get a first instance of this class by calling
  *  `AccessControl#grant()` or `AccessControl#deny()` methods.
- *  @class
- *  @inner
- *  @memberof AccessControl
  */
 class Access {
-
   /**
    *  Inner `IAccessInfo` object.
    *  @protected
@@ -53,27 +58,31 @@ class Access {
    *         Specifies whether this `Access` is denied.
    */
   constructor(
-    ac: AccessControl, roleOrInfo?: string | string[] | IAccessInfo, denied: boolean = false,
+    ac: AccessControl,
+    roleOrInfo?: string | string[] | IAccessInfo,
+    denied: boolean = false,
   ) {
     this._ac = ac;
-    this._grants = (ac as any)._grants;
+    this._grants = (ac as any).grants;
     this._.denied = denied;
 
     if (typeof roleOrInfo === 'string' || Array.isArray(roleOrInfo)) {
       this.role(roleOrInfo);
-    } else if (utils.type(roleOrInfo) === 'object') {
+    } else if (type(roleOrInfo) === 'object') {
       if (Object.keys(roleOrInfo!).length === 0) {
         throw new AccessControlError('Invalid IAccessInfo: {}');
       }
       // if an IAccessInfo instance is passed and it has 'action' defined, we
       // should directly commit it to grants.
       roleOrInfo!.denied = denied;
-      this._ = utils.resetAttributes(roleOrInfo!);
-      if (utils.isInfoFulfilled(this._)) utils.commitToGrants(this._grants, this._, true);
+      this._ = resetAttributes(roleOrInfo!);
+      if (isInfoFulfilled(this._)) commitToGrants(this._grants, this._, true);
     } else if (roleOrInfo !== undefined) {
       // undefined is allowed (`roleOrInfo` can be omitted) but throw if
       // some other type is passed.
-      throw new AccessControlError('Invalid role(s), expected a valid string, string[] or IAccessInfo.');
+      throw new AccessControlError(
+        'Invalid role(s), expected a valid string, string[] or IAccessInfo.',
+      );
     }
   }
 
@@ -105,7 +114,7 @@ class Access {
   role(value: string | string[]): Access {
     // in case chain is not terminated (e.g. `ac.grant('user')`) we'll
     // create/commit the roles to grants with an empty object.
-    utils.preCreateRoles(this._grants, value);
+    preCreateRoles(this._grants, value);
 
     this._.role = value;
     return this;
@@ -120,7 +129,7 @@ class Access {
    */
   resource(value: string | string[]): Access {
     // this will throw if any item fails
-    utils.hasValidNames(value, true);
+    hasValidNames(value, true);
     this._.resource = value;
     return this;
   }
@@ -147,24 +156,9 @@ class Access {
    *         A single or array of roles.
    *  @returns {Access}
    *           Self instance of `Access`.
-   *
-   *  @example
-   *  ac.grant('user').createAny('video')
-   *    .grant('admin').extend('user');
-   *  const permission = ac.can('admin').createAny('video');
-   *  console.log(permission.granted); // true
    */
   extend(roles: string | string[]): Access {
-    utils.extendRole(this._grants, this._.role!, roles);
-    return this;
-  }
-
-  /**
-   *  Alias of `extend`.
-   *  @private
-   */
-  inherit(roles: string | string[]): Access {
-    this.extend(roles);
+    extendRole(this._grants, this._.role!, roles);
     return this;
   }
 
@@ -184,7 +178,7 @@ class Access {
    *    .grant('admin').updateAny('video');
    */
   grant(roleOrInfo?: string | string[] | IAccessInfo): Access {
-    return (new Access(this._ac, roleOrInfo, false)).attributes(['*']);
+    return new Access(this._ac, roleOrInfo, false).attributes(['*']);
   }
 
   /**
@@ -203,16 +197,7 @@ class Access {
    *    .deny('user').deleteAny('video');
    */
   deny(roleOrInfo?: string | string[] | IAccessInfo): Access {
-    return (new Access(this._ac, roleOrInfo, true)).attributes([]);
-  }
-
-  /**
-   *  Chainable, convenience shortcut for {@link ?api=ac#AccessControl#lock|`AccessControl#lock()`}.
-   *  @returns {Access}
-   */
-  lock(): Access {
-    utils.lockAC(this._ac);
-    return this;
+    return new Access(this._ac, roleOrInfo, true).attributes([]);
   }
 
   /**
@@ -478,8 +463,10 @@ class Access {
    *           Self instance of `Access`.
    */
   private _prepareAndCommit(
-    action: string, possession: string,
-    resource?: string | string[], attributes?: string | string[],
+    action: string,
+    possession: string,
+    resource?: string | string[],
+    attributes?: string | string[],
   ): Access {
     this._.action = action;
     this._.possession = possession;
@@ -489,17 +476,16 @@ class Access {
       this._.attributes = [];
     } else {
       // if omitted and not denied, all attributes are allowed
-      this._.attributes = attributes ? utils.toStringArray(attributes) : ['*'];
+      this._.attributes = attributes ? toStringArray(attributes) : ['*'];
     }
 
-    utils.commitToGrants(this._grants, this._, false);
+    commitToGrants(this._grants, this._, false);
 
     // important: reset attributes for chained methods
     this._.attributes = undefined;
 
     return this;
   }
-
 }
 
 export { Access };

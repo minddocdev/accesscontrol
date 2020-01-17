@@ -1,6 +1,6 @@
 {
   "name": "accesscontrol",
-  "version": "2.2.1",
+  "version": "1.0.0",
   "description": "Role and Attribute based Access Control for Node.js",
   "main": "./index.js",
   "directories": {
@@ -9,37 +9,28 @@
   },
   "files": [
     "index.js",
-    "lib",
-    "LICENSE"
+    "lib"
   ],
   "types": "./lib/index.d.ts",
   "scripts": {
-    "deps": "npm-check -u && snyk test",
     "clean": "rm -rf ./lib",
-    "build": "npm run clean && tsc -b -v",
-    "test": "npm run build && jest --verbose --no-cache",
+    "build": "yarn clean && tsc -b -v",
+    "test": "yarn build && jest --verbose --no-cache",
     "test!": "jest --verbose --no-cache",
-    "cover": "npm run build && jest --coverage --verbose --no-cache",
+    "cover": "yarn && jest --coverage --verbose --no-cache",
     "cover!": "jest --coverage --verbose --no-cache",
     "ncu:u": "ncu -u"
   },
   "devDependencies": {
     "@types/jest": "^24.9.0",
     "@types/node": "^13.1.7",
-    "coveralls": "^3.0.9",
-    "docma": "^3.2.2",
     "jest": "~24.9.0",
-    "jest-cli": "^24.9.0",
-    "mkdirp": "^0.5.1",
-    "ncp": "^2.0.0",
     "npm-check-updates": "~4.0.1",
     "prettier": "~1.19.1",
-    "rimraf": "^3.0.0",
-    "snyk": "^1.278.1",
     "ts-jest": "^24.3.0",
     "tslint": "~5.20.1",
     "tslint-config-airbnb": "~5.11.2",
-    "typescript": "^3.7.4"
+    "typescript": "^3.7.5"
   },
   "dependencies": {
     "notation": "^1.3.6"

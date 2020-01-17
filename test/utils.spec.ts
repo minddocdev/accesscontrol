@@ -1,11 +1,9 @@
-import { AccessControl } from '../src';
 import { IQueryInfo } from '../src/core';
-import { RESERVED_KEYWORDS, utils } from '../src/utils';
-// test helper
+import * as utils from '../src/utils';
+
 import { helper } from './helper';
 
 describe('Test Suite: utils (generic)', () => {
-
   test('#type()', () => {
     expect(utils.type(undefined)).toEqual('undefined');
     expect(utils.type(null)).toEqual('null');
@@ -60,7 +58,7 @@ describe('Test Suite: utils (generic)', () => {
     expect(utils.isEmptyArray(true)).toBe(false);
   });
 
-  test('#pushUniq(), #uniqConcat(), #subtractArray()', () => {
+  test('#pushUniq(), #uniqConcat()', () => {
     const original = ['a', 'b', 'c'];
     const arr = original.concat();
     expect(utils.pushUniq(arr, 'a')).toEqual(original);
@@ -68,23 +66,6 @@ describe('Test Suite: utils (generic)', () => {
 
     expect(utils.uniqConcat(original, ['a'])).toEqual(original);
     expect(utils.uniqConcat(original, ['d'])).toEqual(original.concat(['d']));
-
-    expect(utils.subtractArray(original, ['a'])).toEqual(['b', 'c']);
-    expect(utils.subtractArray(original, ['d'])).toEqual(original);
-  });
-
-  test('#deepFreeze()', () => {
-    expect((utils as any).deepFreeze()).toBeUndefined();
-    const o = {
-      x: 1,
-      inner: {
-        x: 2,
-      },
-    };
-    expect(utils.deepFreeze(o)).toEqual(expect.any(Object));
-    expect(() => o.x = 5).toThrow();
-    expect(() => (o as any).inner = {}).toThrow();
-    expect(() => o.inner.x = 6).toThrow();
   });
 
   test('#each(), #eachKey()', () => {
@@ -109,40 +90,19 @@ describe('Test Suite: utils (generic)', () => {
       d[key] = index;
     });
     expect(d).toEqual(o);
-
-    // test thisArg
-
-    // function context() {
-    //   const ok = true;
-    // }
-
-    // utils.each([1], function (_: number) {
-    //   expect(this.ok).toBe(true);
-    // }, new context());
-
-    // utils.eachKey({ key: 1 }, function (_: string) {
-    //   expect(this.ok).toBe(true);
-    // }, new context());
   });
-
 });
 
 describe('Test Suite: utils (core)', () => {
-
-  // ------------------------------------------
-  // NOTE: other parts of these methods should be covered in other tests.
-  // check coverage report.
-  // ------------------------------------------
-
   test('#validName(), #hasValidNames()', () => {
     let valid: any = 'someName';
     expect(utils.validName(valid)).toBe(true);
     expect(utils.validName(valid, false)).toBe(true);
     expect(utils.validName(valid, false)).toBe(true);
 
-    let invalid: any = RESERVED_KEYWORDS[0];
-    helper.expectACError(() => utils.validName(invalid));
-    helper.expectACError(() => utils.validName(invalid, true));
+    let invalid: any = utils.RESERVED_KEYWORDS[0];
+    helper.expectAccessControlError(() => utils.validName(invalid));
+    helper.expectAccessControlError(() => utils.validName(invalid, true));
     expect(utils.validName(invalid, false)).toBe(false);
     expect(utils.validName('', false)).toBe(false);
     expect((utils as any).validName(1, false)).toBe(false);
@@ -154,93 +114,104 @@ describe('Test Suite: utils (core)', () => {
     expect(utils.hasValidNames(valid, false)).toBe(true);
     expect(utils.hasValidNames(valid, false)).toBe(true);
 
-    invalid = ['valid', RESERVED_KEYWORDS[RESERVED_KEYWORDS.length - 1]];
-    helper.expectACError(() => utils.hasValidNames(invalid));
-    helper.expectACError(() => utils.hasValidNames(invalid, true));
+    invalid = ['valid', utils.RESERVED_KEYWORDS[utils.RESERVED_KEYWORDS.length - 1]];
+    helper.expectAccessControlError(() => utils.hasValidNames(invalid));
+    helper.expectAccessControlError(() => utils.hasValidNames(invalid, true));
     expect(utils.hasValidNames(invalid, false)).toBe(false);
   });
 
   test('#validResourceObject()', () => {
-    helper.expectACError(() => utils.validResourceObject(null));
-    helper.expectACError(() => utils.validResourceObject(null));
+    helper.expectAccessControlError(() => utils.validResourceObject(null));
+    helper.expectAccessControlError(() => utils.validResourceObject(null));
     expect(utils.validResourceObject({ create: [] })).toBe(true);
     expect(utils.validResourceObject({ 'create:any': ['*', '!id'] })).toBe(true);
     expect(utils.validResourceObject({ 'update:own': ['*'] })).toBe(true);
 
-    helper.expectACError(() => utils.validResourceObject({ invalid: [], create: [] }));
-    helper.expectACError(() => utils.validResourceObject({ 'invalid:any': [] }));
-    helper.expectACError(() => utils.validResourceObject({ 'invalid:any': [''] }));
-    helper.expectACError(() => utils.validResourceObject({ 'read:own': ['*'], 'invalid:own': [] }));
+    helper.expectAccessControlError(() => utils.validResourceObject({ invalid: [], create: [] }));
+    helper.expectAccessControlError(() => utils.validResourceObject({ 'invalid:any': [] }));
+    helper.expectAccessControlError(() => utils.validResourceObject({ 'invalid:any': [''] }));
+    helper.expectAccessControlError(() =>
+      utils.validResourceObject({ 'read:own': ['*'], 'invalid:own': [] }),
+    );
 
-    helper.expectACError(() => utils.validResourceObject({ 'create:all': [] }));
-    helper.expectACError(() => utils.validResourceObject({ 'create:all': [] }));
+    helper.expectAccessControlError(() => utils.validResourceObject({ 'create:all': [] }));
+    helper.expectAccessControlError(() => utils.validResourceObject({ 'create:all': [] }));
 
-    helper.expectACError(() => utils.validResourceObject({ create: null }));
-    helper.expectACError(() => utils.validResourceObject({ 'create:own': undefined }));
-    helper.expectACError(() => utils.validResourceObject({ 'read:own': [], 'create:any': [''] }));
-    helper.expectACError(() => utils.validResourceObject({ 'create:any': ['*', ''] }));
+    helper.expectAccessControlError(() => utils.validResourceObject({ create: null }));
+    helper.expectAccessControlError(() => utils.validResourceObject({ 'create:own': undefined }));
+    helper.expectAccessControlError(() =>
+      utils.validResourceObject({ 'read:own': [], 'create:any': [''] }),
+    );
+    helper.expectAccessControlError(() => utils.validResourceObject({ 'create:any': ['*', ''] }));
   });
 
   test('#validRoleObject()', () => {
     const grants: any = { admin: { account: { 'read:any': ['*'] } } };
     expect(utils.validRoleObject(grants, 'admin')).toBe(true);
     grants.admin = { account: ['*'] };
-    helper.expectACError(() => utils.validRoleObject(grants, 'admin'));
+    helper.expectAccessControlError(() => utils.validRoleObject(grants, 'admin'));
     grants.admin = { account: { 'read:own': ['*'] } };
     expect(() => utils.validRoleObject(grants, 'admin')).not.toThrow();
     grants.admin = { account: { read: ['*'] } };
     expect(() => utils.validRoleObject(grants, 'admin')).not.toThrow();
     grants.admin = { account: { 'read:all': ['*'] } };
-    helper.expectACError(() => utils.validRoleObject(grants, 'admin'));
+    helper.expectAccessControlError(() => utils.validRoleObject(grants, 'admin'));
     grants.admin = { $extend: ['*'] }; // cannot inherit non-existent role(s)
-    helper.expectACError(() => utils.validRoleObject(grants, 'admin'));
+    helper.expectAccessControlError(() => utils.validRoleObject(grants, 'admin'));
 
     grants.user = { account: { 'read:own': ['*'] } };
     grants.admin = { $extend: ['user'] };
     expect(() => utils.validRoleObject(grants, 'admin')).not.toThrow();
     grants.admin = { $: { account: { 'read:own': ['*'] } } }; // $: reserved
-    helper.expectACError(() => utils.validRoleObject(grants, 'admin'));
+    helper.expectAccessControlError(() => utils.validRoleObject(grants, 'admin'));
     grants.admin = { account: [] }; // invalid resource structure
-    helper.expectACError(() => utils.validRoleObject(grants, 'admin'));
+    helper.expectAccessControlError(() => utils.validRoleObject(grants, 'admin'));
     grants.admin = { account: { 'read:own': [''] } }; // invalid resource structure
-    helper.expectACError(() => utils.validRoleObject(grants, 'admin'));
+    helper.expectAccessControlError(() => utils.validRoleObject(grants, 'admin'));
     grants.admin = { account: null }; // invalid resource structure
-    helper.expectACError(() => utils.validRoleObject(grants, 'admin'));
+    helper.expectAccessControlError(() => utils.validRoleObject(grants, 'admin'));
   });
 
   test('#normalizeQueryInfo(), #normalizeAccessInfo()', () => {
-    helper.expectACError(() => (utils as any).normalizeQueryInfo({ role: 1 }));
-    helper.expectACError(() => utils.normalizeQueryInfo({ role: [] }));
-    helper.expectACError(() => utils.normalizeQueryInfo({ role: '' }));
-    helper.expectACError(() => utils.normalizeQueryInfo({ role: 'sa', resource: '' }));
-    helper.expectACError(() => (utils as any).normalizeQueryInfo({ role: 'sa', resource: null }));
-    helper.expectACError(() => (utils as any).normalizeQueryInfo({ role: 'sa', resource: [] }));
+    helper.expectAccessControlError(() => (utils as any).normalizeQueryInfo({ role: 1 }));
+    helper.expectAccessControlError(() => utils.normalizeQueryInfo({ role: [] }));
+    helper.expectAccessControlError(() => utils.normalizeQueryInfo({ role: '' }));
+    helper.expectAccessControlError(() => utils.normalizeQueryInfo({ role: 'sa', resource: '' }));
+    helper.expectAccessControlError(() =>
+      (utils as any).normalizeQueryInfo({ role: 'sa', resource: null }),
+    );
+    helper.expectAccessControlError(() =>
+      (utils as any).normalizeQueryInfo({ role: 'sa', resource: [] }),
+    );
 
-    helper.expectACError(() => utils.normalizeAccessInfo({ role: [] }));
-    helper.expectACError(() => utils.normalizeAccessInfo({ role: '' }));
-    helper.expectACError(() => (utils as any).normalizeAccessInfo({ role: 1 }));
-    helper.expectACError(() => utils.normalizeAccessInfo({ role: 'sa', resource: '' }));
-    helper.expectACError(() => (utils as any).normalizeAccessInfo({ role: 'sa', resource: null }));
-    helper.expectACError(() => (utils as any).normalizeAccessInfo({ role: 'sa', resource: [] }));
+    helper.expectAccessControlError(() => utils.normalizeAccessInfo({ role: [] }));
+    helper.expectAccessControlError(() => utils.normalizeAccessInfo({ role: '' }));
+    helper.expectAccessControlError(() => (utils as any).normalizeAccessInfo({ role: 1 }));
+    helper.expectAccessControlError(() => utils.normalizeAccessInfo({ role: 'sa', resource: '' }));
+    helper.expectAccessControlError(() =>
+      (utils as any).normalizeAccessInfo({ role: 'sa', resource: null }),
+    );
+    helper.expectAccessControlError(() =>
+      (utils as any).normalizeAccessInfo({ role: 'sa', resource: [] }),
+    );
   });
 
   test('#getRoleHierarchyOf()', () => {
     const grants: any = {
       admin: {
         $extend: ['user'],
-        // account: { 'read:any': ['*'] }
       },
     };
-    helper.expectACError(() => utils.getRoleHierarchyOf(grants, 'admin'));
+    helper.expectAccessControlError(() => utils.getRoleHierarchyOf(grants, 'admin'));
     grants.admin = { $extend: ['admin'] };
-    helper.expectACError(() => utils.getRoleHierarchyOf(grants, 'admin'));
+    helper.expectAccessControlError(() => utils.getRoleHierarchyOf(grants, 'admin'));
 
     grants.admin = { account: { 'read:any': ['*'] } };
-    helper.expectACError(() => utils.getRoleHierarchyOf(grants, ''));
+    helper.expectAccessControlError(() => utils.getRoleHierarchyOf(grants, ''));
   });
 
   test('#getFlatRoles()', () => {
-    helper.expectACError(() => utils.getFlatRoles({}, ''));
+    helper.expectAccessControlError(() => utils.getFlatRoles({}, ''));
   });
 
   test('#getNonExistentRoles()', () => {
@@ -265,7 +236,7 @@ describe('Test Suite: utils (core)', () => {
     };
     expect(utils.getCrossExtendingRole(grants, 'admin', ['admin'])).toEqual(null);
     expect(utils.getCrossExtendingRole(grants, 'admin', ['user'])).toEqual(null);
-    helper.expectACError(() => utils.getCrossExtendingRole(grants, 'user', ['admin']));
+    helper.expectAccessControlError(() => utils.getCrossExtendingRole(grants, 'user', ['admin']));
   });
 
   test('#extendRole()', () => {
@@ -279,10 +250,12 @@ describe('Test Suite: utils (core)', () => {
       },
       viewer: {},
     };
-    helper.expectACError(() => utils.extendRole(grants, 'nonexisting', 'user'));
-    helper.expectACError(() => utils.extendRole(grants, 'admin', 'nonexisting'));
-    helper.expectACError(() => utils.extendRole(grants, 'admin', 'editor')); // cross
-    helper.expectACError(() => utils.extendRole(grants, '$', 'user')); // reserved keyword
+    helper.expectAccessControlError(() => utils.extendRole(grants, 'nonexisting', 'user'));
+    helper.expectAccessControlError(() => utils.extendRole(grants, 'admin', 'nonexisting'));
+    // cross
+    helper.expectAccessControlError(() => utils.extendRole(grants, 'admin', 'editor'));
+    // reserved keyword
+    helper.expectAccessControlError(() => utils.extendRole(grants, '$', 'user'));
     expect(() => utils.extendRole(grants, 'admin', 'viewer')).not.toThrow();
   });
 
@@ -304,14 +277,6 @@ describe('Test Suite: utils (core)', () => {
     };
     expect(utils.getUnionAttrsOfRoles(grants, query)).toEqual([]);
     query.role = 'nonexisting';
-    helper.expectACError(() => utils.getUnionAttrsOfRoles(grants, query));
+    helper.expectAccessControlError(() => utils.getUnionAttrsOfRoles(grants, query));
   });
-
-  test('#lockAC()', () => {
-    const ac = new AccessControl();
-    helper.expectACError(() => utils.lockAC(ac));
-    (ac as any)._grants = null;
-    helper.expectACError(() => utils.lockAC(ac));
-  });
-
 });

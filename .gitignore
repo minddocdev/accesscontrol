@@ -1,10 +1,6 @@
-/backup/
 /node_modules/
-npm-debug.log
-tmp
-
-/files/
-/docs/errors.md
 /test/.coverage/
+
 .DS_Store
+tsconfig.tsbuildinfo
 yarn-error.log
