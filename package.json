@@ -32,8 +32,8 @@
   },
   "devDependencies": {
     "@types/jest": "^24.9.0",
-    "@types/node": "^13.1.7",
-    "husky": "^4.0.3",
+    "@types/node": "^13.1.8",
+    "husky": "^4.0.10",
     "jest": "^24.9.0",
     "npm-check-updates": "^4.0.1",
     "prettier": "^1.19.1",
