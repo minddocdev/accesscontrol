@@ -169,44 +169,13 @@ ac.deny('role').deleteAny('resource');
 
 _Note that **own** requires you to also check for the actual possession._
 
-## Resources and Resource-Attributes
-
-Multiple roles can have access to a specific resource. But depending on the context, you may need to limit the contents of the resource for specific roles.
-
-This is possible by resource attributes. You can use Glob notation to define allowed or denied attributes.
-
-For example, we have a `video` resource that has the following attributes: `id`, `title` and `runtime`.
-All attributes of _any_ `video` resource can be read by an `admin` role:
-
-```typescript
-ac.grant('admin').readAny('video', ['*']);
-// equivalent to:
-// ac.grant('admin').readAny('video');
-```
-
-But the `id` attribute should not be read by a `user` role.
-
-```typescript
-ac.grant('user').readOwn('video', ['*', '!id']);
-// equivalent to:
-// ac.grant('user').readOwn('video', ['title', 'runtime']);
-```
-
-You can also use nested objects (attributes).
-
-```typescript
-ac.grant('user').readOwn('account', ['*', '!record.id']);
-```
-
-## Checking Permissions and Filtering Attributes
+## Checking Permissions
 
 You can call `.can(<role>).<action>(<resource>)` on an `AccessControl` instance to check for granted permissions for a specific resource and action.
 
 ```typescript
 const permission = ac.can('user').readOwn('account');
 permission.granted; // true
-permission.attributes; // ['*', '!record.id']
-permission.filter(data); // filtered data (without record.id)
 ```
 
 See [express.js example](#expressjs-example).
