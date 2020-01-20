@@ -1,5 +1,8 @@
-import { Access, IAccessInfo, IQueryInfo, Permission, Query } from './core';
-declare class AccessControl {
+import { Access } from './access';
+import { IAccessInfo, IQueryInfo } from './interfaces';
+import { Permission } from './permission';
+import { Query } from './query';
+export declare class AccessControl {
     private grants;
     constructor(grants?: any);
     getGrants(): any;
@@ -18,4 +21,3 @@ declare class AccessControl {
     static get Error(): any;
     static isAccessControlError(object: any): boolean;
 }
-export { AccessControl };

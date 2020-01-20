@@ -1,4 +1,4 @@
-import { IAccessInfo, IQueryInfo } from './core';
+import { IAccessInfo, IQueryInfo } from './interfaces';
 export declare const RESERVED_KEYWORDS: string[];
 export declare function type(o: any): string;
 export declare function hasDefined(o: any, propName: string): boolean;

@@ -1,4 +1,3 @@
-
 export class AccessControlError extends Error {
   public name: string = 'AccessControlError';
   /* istanbul ignore next */

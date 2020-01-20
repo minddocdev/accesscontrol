@@ -1,8 +1,12 @@
-import { Access, AccessControlError, IAccessInfo, IQueryInfo, Permission, Query } from './core';
+import { Access } from './access';
 import { Action, Possession } from './enums';
+import { AccessControlError } from './error';
+import { IAccessInfo, IQueryInfo } from './interfaces';
+import { Permission } from './permission';
+import { Query } from './query';
 import { getInspectedGrants, getResources } from './utils';
 
-class AccessControl {
+export class AccessControl {
   private grants: any;
 
   /**
@@ -110,7 +114,6 @@ class AccessControl {
    * @param {string|Array|IQueryInfo} role - A single role (as a string), a
    * list of roles (as an array) or an `IQueryInfo` object that fully
    * or partially defines the access to be checked.
-   *
    * @returns {Query} - The returned object provides chainable methods to
    * define and query the access permissions to be checked.
    */
@@ -131,7 +134,6 @@ class AccessControl {
    * object; instead of chaining methods (as in `.can(<role>).<action>(<resource>)`).
    *
    * @param {IQueryInfo} queryInfo - A fulfilled `IQueryInfo` object
-   *
    * @returns {Permission} - An object that provides properties and methods
    * that defines the granted access permissions.
    */
@@ -140,19 +142,17 @@ class AccessControl {
   }
 
   /**
-   *  Gets an instance of `Grant` (inner) object. This is used to grant access
-   *  to specified resource(s) for the given role(s).
+   * Gets an instance of `Grant` (inner) object. This is used to grant access
+   * to specified resource(s) for the given role(s).
    *
-   *  @param {string|Array<String>|IAccessInfo} [role] A single role (as a
-   *  string), a list of roles (as an array) or an `IAccessInfo` object that
-   *  fully or partially defines the access to be granted. This can be omitted
-   *  and chained with `.role()` to define the role.
-   *
-   *  @return {Access} - The returned object provides chainable properties to
-   *  build and define the access to be granted. See the examples for details.
-   *
-   *  @throws {AccessControlError} - If `role` is explicitly set to an invalid value.
-   *  @throws {AccessControlError} - If called after `.lock()` is called.
+   * @param {string|Array<String>|IAccessInfo} [role] A single role (as a
+   * string), a list of roles (as an array) or an `IAccessInfo` object that
+   * fully or partially defines the access to be granted. This can be omitted
+   * and chained with `.role()` to define the role.
+   * @return {Access} - The returned object provides chainable properties to
+   * build and define the access to be granted. See the examples for details.
+   * @throws {AccessControlError} - If `role` is explicitly set to an invalid value.
+   * @throws {AccessControlError} - If called after `.lock()` is called.
    */
   grant(role?: string | string[] | IAccessInfo): Access {
     // throw on explicit undefined
@@ -164,24 +164,18 @@ class AccessControl {
   }
 
   /**
-   *  Gets an instance of `Access` object. This is used to deny access to
-   *  specified resource(s) for the given role(s). Denying will only remove a
-   *  previously created grant. So if not granted before, you don't need to
-   *  deny an access.
-   *  @name AccessControl#deny
-   *  @alias AccessControl#reject
-   *  @function
-   *  @chainable
+   * Gets an instance of `Access` object. This is used to deny access to
+   * specified resource(s) for the given role(s). Denying will only remove a
+   * previously created grant. So if not granted before, you don't need to
+   * deny an access.
    *
-   *  @param {string|Array<String>|IAccessInfo} role A single role (as a
-   *  string), a list of roles (as an array) or an `IAccessInfo` object that
-   *  fully or partially defines the access to be denied.
-   *
-   *  @return {Access} The returned object provides chainable properties to
-   *  build and define the access to be granted.
-   *
-   *  @throws {AccessControlError} - If `role` is explicitly set to an invalid value.
-   *  @throws {AccessControlError} - If called after `.lock()` is called.
+   * @param {string|Array<String>|IAccessInfo} role A single role (as a
+   * string), a list of roles (as an array) or an `IAccessInfo` object that
+   * fully or partially defines the access to be denied.
+   * @return {Access} The returned object provides chainable properties to
+   * build and define the access to be granted.
+   * @throws {AccessControlError} - If `role` is explicitly set to an invalid value.
+   * @throws {AccessControlError} - If called after `.lock()` is called.
    */
   deny(role?: string | string[] | IAccessInfo): Access {
     // throw on explicit undefined
@@ -193,24 +187,21 @@ class AccessControl {
   }
 
   /**
-   *  Documented separately in enums/Action
-   *  @private
+   * Documented separately in enums/Action
    */
   static get Action(): any {
     return Action;
   }
 
   /**
-   *  Documented separately in enums/Possession
-   *  @private
+   * Documented separately in enums/Possession
    */
   static get Possession(): any {
     return Possession;
   }
 
   /**
-   *  Documented separately in AccessControlError
-   *  @private
+   * Documented separately in AccessControlError
    */
   static get Error(): any {
     return AccessControlError;
@@ -226,5 +217,3 @@ class AccessControl {
     return object instanceof AccessControlError;
   }
 }
-
-export { AccessControl };

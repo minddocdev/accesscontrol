@@ -1,5 +1,4 @@
-import { AccessControl } from '../src';
-import { AccessControlError, IQueryInfo } from '../src/core';
+import { AccessControl, AccessControlError, IQueryInfo } from '../src';
 import * as utils from '../src/utils';
 // test helper
 import { helper } from './helper';

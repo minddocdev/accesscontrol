@@ -1,5 +1,4 @@
-declare const Possession: {
+export declare const Possession: {
     OWN: string;
     ANY: string;
 };
-export { Possession };

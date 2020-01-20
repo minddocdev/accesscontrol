@@ -1,5 +1,4 @@
-import { AccessControl } from '../src';
-import { AccessControlError } from '../src/core';
+import { AccessControl, AccessControlError } from '../src';
 
 const helper = {
   expectAccessControlError(fn: any, errMsg?: string) {

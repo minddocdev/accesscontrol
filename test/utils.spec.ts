@@ -1,4 +1,4 @@
-import { IQueryInfo } from '../src/core';
+import { IQueryInfo } from '../src';
 import * as utils from '../src/utils';
 
 import { helper } from './helper';
