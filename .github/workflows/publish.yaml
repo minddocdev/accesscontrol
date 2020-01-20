@@ -21,7 +21,6 @@ jobs:
       - name: Build code
         run: yarn build
       - name: Publish the package
-        if: github.ref == 'refs/heads/master'
         run: yarn publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
