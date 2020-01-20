@@ -7,8 +7,7 @@ Many Role Based Access Control (RBAC) implementations differ, but the basics is 
 - Chainable, friendly API, e.g. `ac.can(role).create(resource)`
 - Role hierarchical **inheritance**.
 - Define grants **at once** (e.g. from database result) or **one by one**.
-- Grant/deny permissions by attributes defined by **glob notation** (with nested object support).
-- Ability to **filter** data (model) instance by allowed attributes.
+- Grant/deny permissions by attributes defined by **glob notation**.
 - Ability to control access on **own** or **any** resources.
 - No **silent** errors.
 - **Fast**. (Grants are stored in memory, no database queries.)
@@ -30,8 +29,15 @@ yarn test
 ## Installation
 
 ```bash
-yarn add accesscontrol
+yarn add @minddocdev/accesscontrol
 ```
+
+## Publishing
+
+To publish a new version of the package, firstly bump the version in the `package.json` file,
+then cut a new release on [Github](https://github.com/minddocdev/accesscontrol/releases). This
+will automatically initiate the `publish` Github Action workflow and publish a new version to
+[Github Packages](https://github.com/minddocdev/accesscontrol/packages)
 
 ## Guide
 
@@ -61,28 +67,6 @@ console.log(permission.attributes); // —> ['*'] (all attributes)
 permission = ac.can('admin').updateAny('video');
 console.log(permission.granted); // —> true
 console.log(permission.attributes); // —> ['title']
-```
-
-### Express.js Example
-
-Check role permissions for the requested resource and action, if granted; respond with filtered attributes.
-
-```typescript
-const ac = new AccessControl(grants);
-// ...
-router.get('/videos/:title', function(req, res, next) {
-  const permission = ac.can(req.user.role).readAny('video');
-  if (permission.granted) {
-    Video.find(req.params.title, function(err, data) {
-      if (err || !data) return res.status(404).end();
-      // filter data by permission attributes and send.
-      res.json(permission.filter(data));
-    });
-  } else {
-    // resource is forbidden for this user/role
-    res.status(403).end();
-  }
-});
 ```
 
 ## Roles
@@ -174,8 +158,6 @@ const permission = ac.can('user').readOwn('account');
 permission.granted; // true
 ```
 
-See [express.js example](#expressjs-example).
-
 ## Defining All Grants at Once
 
 You can pass the grants directly to the `AccessControl` constructor.
@@ -186,17 +168,17 @@ It accepts either an `Object`:
 let grantsObject = {
   admin: {
     video: {
-      'create:any': ['*', '!views'],
+      'create:any': ['*'],
       'read:any': ['*'],
-      'update:any': ['*', '!views'],
+      'update:any': ['*'],
       'delete:any': ['*'],
     },
   },
   user: {
     video: {
-      'create:own': ['*', '!rating', '!views'],
+      'create:own': ['*'],
       'read:own': ['*'],
-      'update:own': ['*', '!rating', '!views'],
+      'update:own': ['*'],
       'delete:own': ['*'],
     },
   },
@@ -209,14 +191,14 @@ const ac = new AccessControl(grantsObject);
 ```typescript
 // grant list fetched from DB (to be converted to a valid grants object, internally)
 let grantList = [
-  { role: 'admin', resource: 'video', action: 'create:any', attributes: '*, !views' },
+  { role: 'admin', resource: 'video', action: 'create:any', attributes: '*' },
   { role: 'admin', resource: 'video', action: 'read:any', attributes: '*' },
-  { role: 'admin', resource: 'video', action: 'update:any', attributes: '*, !views' },
+  { role: 'admin', resource: 'video', action: 'update:any', attributes: '*' },
   { role: 'admin', resource: 'video', action: 'delete:any', attributes: '*' },
 
-  { role: 'user', resource: 'video', action: 'create:own', attributes: '*, !rating, !views' },
+  { role: 'user', resource: 'video', action: 'create:own', attributes: '*' },
   { role: 'user', resource: 'video', action: 'read:any', attributes: '*' },
-  { role: 'user', resource: 'video', action: 'update:own', attributes: '*, !rating, !views' },
+  { role: 'user', resource: 'video', action: 'update:own', attributes: '*' },
   { role: 'user', resource: 'video', action: 'delete:own', attributes: '*' },
 ];
 const ac = new AccessControl(grantList);
