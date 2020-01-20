@@ -1,0 +1,27 @@
+name: "publish"
+on:
+  release:
+    types: [created]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "13.x"
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@minddocdev"
+      - name: Install yarn dependencies
+        run: yarn install --frozen-lockfile
+      - name: Lint code
+        run: yarn lint
+      - name: Test code
+        run: yarn test
+      - name: Build code
+        run: yarn build
+      - name: Publish the package
+        if: github.ref == 'refs/heads/master'
+        run: yarn publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

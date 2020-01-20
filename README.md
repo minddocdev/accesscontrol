@@ -1,10 +1,6 @@
-# Role and Attribute based Access Control
+# Role Based Access Control (RBAC)
 
-Many [RBAC][rbac] (Role-Based Access Control) implementations differ, but the basics is widely adopted since it simulates real life role (job) assignments. But while data is getting more and more complex; you need to define policies on resources, subjects or even environments. This is called [ABAC][abac] (Attribute-Based Access Control).
-
-With the idea of merging the best features of the two (see this [NIST paper][nist-paper]); this library implements RBAC basics and also focuses on _resource_ and _action_ attributes.
-
-This was repository was forked from [onury/accesscontrol](https://github.com/onury/accesscontrol).
+Many Role Based Access Control (RBAC) implementations differ, but the basics is widely adopted since it simulates real life role (job) assignments. But while data is getting more and more complex; you need to define policies on resources, subjects or even environments, this is called Attribute Based Access Control (ABAC).
 
 ## Core Features
 
