@@ -1,5 +1,5 @@
 {
-  "name": "accesscontrol",
+  "name": "@minddocdev/accesscontrol",
   "version": "0.0.1",
   "description": "Role and Attribute based Access Control",
   "author": "MindDoc Health GmbH",
@@ -16,10 +16,10 @@
   "types": "lib/src/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/minddocdev/accesscontrol"
+    "url": "https://github.com/minddocdev/accesscontrol.git"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/minddocdev"
+    "registry": "https://npm.pkg.github.com/"
   },
   "keywords": [
     "accesscontrol",
