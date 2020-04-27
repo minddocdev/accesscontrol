@@ -1,6 +1,6 @@
 {
   "name": "@minddocdev/accesscontrol",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Role and Attribute based Access Control",
   "author": "MindDoc Health GmbH",
   "license": "MIT",
@@ -34,16 +34,16 @@
     "ncu:u": "ncu -u"
   },
   "devDependencies": {
-    "@types/jest": "^24.9.0",
-    "@types/node": "^13.1.8",
-    "husky": "^4.0.10",
-    "jest": "^24.9.0",
-    "npm-check-updates": "^4.0.1",
-    "prettier": "^1.19.1",
-    "ts-jest": "^24.3.0",
-    "tslint": "^5.20.1",
+    "@types/jest": "^25.2.1",
+    "@types/node": "^13.13.4",
+    "husky": "^4.2.5",
+    "jest": "^25.4.0",
+    "npm-check-updates": "^4.1.2",
+    "prettier": "^2.0.5",
+    "ts-jest": "^25.4.0",
+    "tslint": "^6.1.2",
     "tslint-config-airbnb": "^5.11.2",
-    "typescript": "^3.7.5"
+    "typescript": "^3.8.3"
   },
   "dependencies": {},
   "husky": {
