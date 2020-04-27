@@ -12,4 +12,5 @@ jobs:
         uses: anothrNick/github-tag-action@1.17.2
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          DEFAULT_BUMP: minor
           WITH_V: true
