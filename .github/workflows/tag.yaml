@@ -9,7 +9,6 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: Bump version and push tag
-        uses: minddocdev/github-tag-action@master
+        uses: minddocdev/mou-version-action@v1.0.0
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-          WITH_V: true
+          token: ${{ github.token }}
