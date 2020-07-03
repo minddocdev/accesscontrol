@@ -1,6 +1,7 @@
-/node_modules/
-/test/.coverage/
+node_modules/
+test/.coverage/
 
 .DS_Store
+.vscode
 tsconfig.tsbuildinfo
 yarn-error.log
