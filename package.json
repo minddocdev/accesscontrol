@@ -1,6 +1,6 @@
 {
   "name": "@minddocdev/accesscontrol",
-  "version": "0.1.2",
+  "version": "0.0.0",
   "description": "Role and Attribute based Access Control",
   "author": "MindDoc Health GmbH",
   "license": "MIT",
@@ -18,9 +18,6 @@
     "type": "git",
     "url": "https://github.com/minddocdev/accesscontrol.git"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
   "keywords": [
     "accesscontrol",
     "node",
@@ -30,20 +27,18 @@
   "scripts": {
     "build": "tsc -b -v",
     "test": "yarn build && jest --coverage --verbose --no-cache",
-    "lint": "tslint --project .",
-    "ncu:u": "ncu -u"
+    "lint": "tslint --project ."
   },
   "devDependencies": {
-    "@types/jest": "^26.0.3",
-    "@types/node": "^14.0.14",
-    "husky": "^4.2.5",
-    "jest": "^26.1.0",
-    "npm-check-updates": "^7.0.1",
-    "prettier": "^2.0.5",
-    "ts-jest": "^26.1.1",
-    "tslint": "^6.1.2",
+    "@types/jest": "^26.0.20",
+    "@types/node": "^14.14.20",
+    "husky": "^4.3.7",
+    "jest": "^26.6.3",
+    "prettier": "^2.2.1",
+    "ts-jest": "^26.4.4",
+    "tslint": "^6.1.3",
     "tslint-config-airbnb": "^5.11.2",
-    "typescript": "^3.9.6"
+    "typescript": "^4.1.3"
   },
   "dependencies": {},
   "husky": {
