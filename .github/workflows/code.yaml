@@ -6,8 +6,10 @@ on:
       - "master"
     paths:
       - ".github/workflows/code.yaml"
+      - ".github/workflows/publish.yaml"
       - "package.json"
       - "lib/**"
+      - "README.md"
       - "src/**"
       - "test/*"
       - "tsconfig.json"
@@ -15,8 +17,10 @@ on:
   pull_request:
     paths:
       - ".github/workflows/code.yaml"
+      - ".github/workflows/publish.yaml"
       - "package.json"
       - "lib/**"
+      - "README.md"
       - "src/**"
       - "test/*"
       - "tsconfig.json"
@@ -28,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout git repository
-        uses: actions/checkout@v1.2.0
+        uses: actions/checkout@v2.3.2
       - name: Install yarn dependencies
         run: yarn install --frozen-lockfile
       - name: Lint code
@@ -43,11 +47,16 @@ jobs:
     needs: test
     steps:
       - name: Checkout git repository
-        uses: actions/checkout@v1.2.0
+        uses: actions/checkout@v2.3.2
+      - name: Clean old release drafts
+        run: hub release -f "%T (%S) %n" --include-drafts | grep " (draft)" | awk '{print $1}' | xargs --no-run-if-empty -t -n1 hub release delete
+        env:
+          GITHUB_USER: minddocbot
+          GITHUB_TOKEN: ${{ secrets.MINDDOCBOT_TOKEN }}
       - name: Create release
         uses: minddocdev/mou-release-action@master
         with:
           draft: true
           prerelease: false
           templatePath: RELEASE_DRAFT/default.md
-          token: ${{ github.token }}
+          token: ${{ secrets.MINDDOCBOT_TOKEN }}

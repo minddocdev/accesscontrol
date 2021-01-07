@@ -12,34 +12,13 @@ Many Role Based Access Control (RBAC) implementations differ, but the basics is 
 - No **silent** errors.
 - **Fast**. (Grants are stored in memory, no database queries.)
 
-## Getting Started
-
-```bash
-yarn install
-```
-
-```bash
-yarn build
-```
-
-```bash
-yarn test
-```
-
 ## Installation
 
 ```bash
 yarn add @minddocdev/accesscontrol
 ```
 
-## Publishing
-
-To publish a new version of the package, firstly bump the version in the `package.json` file,
-then cut a new release on [Github](https://github.com/minddocdev/accesscontrol/releases). This
-will automatically initiate the `publish` Github Action workflow and publish a new version to
-[Github Packages](https://github.com/minddocdev/accesscontrol/packages)
-
-## Guide
+## Usage
 
 ```typescript
 import { AccessControl } from 'accesscontrol';

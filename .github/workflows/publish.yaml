@@ -3,24 +3,46 @@ on:
   release:
     types: [published]
 jobs:
-  build:
+  publish-npm:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v2.3.2
+      - name: Set release version
+        id: vars
+        run: echo ::set-output name=tag::$(echo ${{ github.event.release.tag_name }} | cut -d "v" -f 2)
+      - uses: actions/setup-node@v2
+        with:
+          always-auth: true
+          node-version: "13.x"
+          registry-url: "https://registry.npmjs.org"
+          scope: "@minddocdev"
+      - name: Publish the package
+        run: |
+          npm --no-git-tag-version version $RELEASE_VERSION
+          npm config set registry https://registry.npmjs.org
+          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+  publish-github:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.2
+      - name: Set release version
+        id: vars
+        run: echo ::set-output name=tag::$(echo ${{ github.event.release.tag_name }} | cut -d "v" -f 2)
+      - uses: actions/setup-node@v2
         with:
           node-version: "13.x"
           registry-url: "https://npm.pkg.github.com"
           scope: "@minddocdev"
-      - name: Install yarn dependencies
-        run: yarn install --frozen-lockfile
-      - name: Lint code
-        run: yarn lint
-      - name: Test code
-        run: yarn test
-      - name: Build code
-        run: yarn build
       - name: Publish the package
-        run: yarn publish
+        run: |
+          npm --no-git-tag-version version $RELEASE_VERSION
+          npm config set registry https://npm.pkg.github.com
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
+          npm publish --access public
         env:
-          NODE_AUTH_TOKEN: ${{ github.token }}
+          NODE_AUTH_TOKEN: ${{ secrets.MINDDOCBOT_TOKEN }}
+          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
