@@ -15,7 +15,7 @@ jobs:
           always-auth: true
           node-version: "13.x"
           registry-url: "https://registry.npmjs.org"
-          scope: "@minddocdev"
+          scope: "@minddoc"
       - name: Publish the package
         run: |
           npm --no-git-tag-version version $RELEASE_VERSION

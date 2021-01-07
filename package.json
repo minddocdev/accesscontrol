@@ -1,5 +1,5 @@
 {
-  "name": "@minddocdev/accesscontrol",
+  "name": "@minddoc/accesscontrol",
   "version": "0.0.0",
   "description": "Role and Attribute based Access Control",
   "author": "MindDoc Health GmbH",
