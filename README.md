@@ -15,7 +15,7 @@ Many Role Based Access Control (RBAC) implementations differ, but the basics is 
 ## Installation
 
 ```bash
-yarn add @minddocdev/accesscontrol
+yarn add @minddoc/accesscontrol
 ```
 
 ## Usage
