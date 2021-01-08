@@ -39,6 +39,7 @@ jobs:
           scope: "@minddocdev"
       - name: Publish the package
         run: |
+          sed -i 's/@minddoc/@minddocdev/g' package.json
           npm --no-git-tag-version version $RELEASE_VERSION
           npm config set registry https://npm.pkg.github.com
           echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
