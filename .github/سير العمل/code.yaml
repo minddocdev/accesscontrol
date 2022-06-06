@@ -1,16 +1,9 @@
-name: "code"
-
-on:
+name: "
   push:
     branches:
       - "master"
     paths:
-      - ".github/workflows/code.yaml"
-      - ".github/workflows/publish.yaml"
-      - "package.json"
-      - "lib/**"
-      - "README.md"
-      - "src/**"
+      - 
       - "test/*"
       - "tsconfig.json"
       - "tslint.json"
